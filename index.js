@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const queries = require('./db/query')
 
 //Inquirer prompt.
 function prompt() {
@@ -24,6 +25,7 @@ function prompt() {
     .then((data) => {
         //Show formatted table showing department names and ids.
       if (data.main === "View all departments") {
+        getDepartments()
         console.log("Viewing all departments");
 
         //Show formatted table showing job title, role id, department role belongs to, and salary for that role.
@@ -180,5 +182,16 @@ function prompt() {
       }
     });
 }
+
+function getDepartments() {
+    queries.findAllDepartments().then(([data]) => {
+        console.table(data);
+    }).then(()=>{
+        prompt();
+    });
+}
+
+
+
 
 prompt();
