@@ -30,11 +30,13 @@ function prompt() {
 
         //Show formatted table showing job title, role id, department role belongs to, and salary for that role.
       } else if (data.main === "View all roles") {
+        getRoles()
         console.log("Viewing all roles");
 
         //Show formatted table showing employee data (ids, first & last names, job title, departments, salaries, and managers the employees report to).
       } else if (data.main === "View all employees") {
         console.log("Viewing all employees");
+        getEmployees()
 
         //Prompt to enter the name of a new department and add it to the database.
       } else if (data.main === "Add a department") {
@@ -191,7 +193,21 @@ function getDepartments() {
     });
 }
 
+function getRoles() {
+    queries.findAllRoles().then(([data]) => {
+        console.table(data);
+    }).then(()=>{
+        prompt();
+    });
+}
 
+function getEmployees() {
+    queries.findAllEmployees().then(([data]) => {
+        console.table(data);
+    }).then(()=>{
+        prompt();
+    });
+}
 
 
 prompt();
