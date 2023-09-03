@@ -70,6 +70,9 @@ function prompt() {
           });
         //Add new role
       } else if (data.main === "Add a role") {
+        db.query(`SELECT * FROM department`, (err, result) => {
+            if (err) throw err;
+
         inquirer
           .prompt([
             {
@@ -99,23 +102,32 @@ function prompt() {
               },
             },
             {
-              type: "input",
+              type: "list",
               name: "department",
-              message: "Enter department for role to be added to:",
-              validate: (input) => {
-                if (input) {
-                  return true;
-                } else {
-                  console.log("Please enter a department name!");
-                  return false;
+              message: "Select department to assign role to.",
+              choices: () => {
+                var deptsArray = [];
+                for (var i=0; i < result.length; i++) {
+                    deptsArray.push(result[i].name);
                 }
-              },
+                return deptsArray;
+              }
             },
           ])
           .then((data) => {
-            console.log("Role added");
+            for (var i = 0; i < result.length; i++) {
+                if (result[i].name === data.department) {
+                    var department = result[i];
+                }
+            }
+            db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [data.role, data.salary, department.id], (err, result) => {
+                if (err) throw err;
+                console.log(`Added ${data.role} to the database.`)
+                prompt();
+            })
+            
           });
-
+        });
         //Add new employee
       } else if (data.main === "Add an employee") {
         inquirer
