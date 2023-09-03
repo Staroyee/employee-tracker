@@ -64,6 +64,7 @@ function prompt() {
               (err, result) => {
                 if (err) throw err;
                 console.log(`Added ${data.department} to the database.`);
+                prompt();
               }
             );
           });
