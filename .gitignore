@@ -1,4 +1,4 @@
-connection
+/db/connection.js
 
 # Logs
 logs
