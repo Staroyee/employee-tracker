@@ -1,5 +1,5 @@
 const db = require("./connection")
-
+//Class functions returning queries for use in index.js file
 class Queries {
     constructor(db) {
         this.db = db

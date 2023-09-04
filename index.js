@@ -1,3 +1,4 @@
+//Import dependencies
 const inquirer = require("inquirer");
 const queries = require("./db/query");
 const db = require("./db/connection");
@@ -24,22 +25,22 @@ function prompt() {
     ])
     //What to do with the data.
     .then((data) => {
-      //View departments
+      /*--------View departments--------*/
       if (data.main === "View all departments") {
         getDepartments();
         console.log("Viewing all departments");
 
-        //View roles
+        /*--------View roles--------*/
       } else if (data.main === "View all roles") {
         getRoles();
         console.log("Viewing all roles");
 
-        //View employees
+        /*--------View employees--------*/
       } else if (data.main === "View all employees") {
         console.log("Viewing all employees");
         getEmployees();
 
-        //Add new department
+        /*--------Add new department--------*/
       } else if (data.main === "Add a department") {
         inquirer
           .prompt([
@@ -68,7 +69,7 @@ function prompt() {
               }
             );
           });
-        //Add new role
+        /*--------Add new role--------*/
       } else if (data.main === "Add a role") {
         db.query(`SELECT * FROM department`, (err, result) => {
           if (err) throw err;
@@ -132,7 +133,7 @@ function prompt() {
               );
             });
         });
-        //Add new employee
+        /*--------Add new employee--------*/
       } else if (data.main === "Add an employee") {
         db.query(`SELECT * FROM employee, role`, (err, result) => {
           if (err) throw err;
@@ -191,13 +192,13 @@ function prompt() {
                 },
                 function (err) {
                   if (err) throw err;
-                  console.log("Added employee to database!");
+                  console.log(`Added ${data.first} to company database!`);
                   prompt();
                 }
               );
             });
         });
-        //Update employee information
+        /*--------Update employee role--------*/
       } else if (data.main === "Update an employee role") {
         db.query(
           "SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;",
@@ -228,26 +229,26 @@ function prompt() {
               .then(function (data) {
                 var roleId = selectRole().indexOf(data.role) + 1;
                 db.query(
-                  "UPDATE employee SET WHERE ?",
-                  {
-                    last_name: data.lastName
-                  },
-                  {
+                  "UPDATE employee SET ? WHERE ?",
+                  [{
                     role_id: roleId
                   },
-                  function (err) {
+                  {
+                    last_name: data.lastName
+                  }], 
+                  (err, result) => {
                     if (err) throw err;
-                    console.log("Employee details updated!");
+                    console.log(`Updated role for ${data.lastName} in company database`)
                     prompt();
-                  }
-                );
+                  
               });
-          }
-        );
-      }
+          });
+        })
+      };
     });
-}
+  }
 
+//Get all departments
 function getDepartments() {
   queries
     .findAllDepartments()
@@ -258,7 +259,7 @@ function getDepartments() {
       prompt();
     });
 }
-
+//Get all roles
 function getRoles() {
   queries
     .findAllRoles()
@@ -269,7 +270,7 @@ function getRoles() {
       prompt();
     });
 }
-
+//Get all employees
 function getEmployees() {
   queries
     .findAllEmployees()
@@ -280,7 +281,7 @@ function getEmployees() {
       prompt();
     });
 }
-
+//Select manager function
 var managersArr = [];
 function selectManager() {
   db.query(
@@ -294,7 +295,7 @@ function selectManager() {
   );
   return managersArr;
 }
-
+//Select role function
 var roleArr = [];
 function selectRole() {
   db.query("SELECT * FROM role", function (err, result) {
